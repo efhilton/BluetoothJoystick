@@ -1,0 +1,54 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    tools:context=".JoystickActivity">
+
+
+    <ImageView
+        android:id="@+id/thumbstick_bg"
+        android:layout_width="300sp"
+        android:layout_height="300sp"
+        android:contentDescription="@string/joystick_background"
+        android:src="@drawable/air_joystick_bg600"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/thumbstick"
+        android:layout_width="100sp"
+        android:layout_height="100sp"
+        android:contentDescription="@string/joystick_thumbstick"
+        android:src="@drawable/air_joystick_stick320"
+        app:layout_constraintBottom_toBottomOf="@id/thumbstick_bg"
+        app:layout_constraintEnd_toEndOf="@id/thumbstick_bg"
+        app:layout_constraintStart_toStartOf="@id/thumbstick_bg"
+        app:layout_constraintTop_toTopOf="@id/thumbstick_bg" />
+
+    <TextView
+        android:id="@+id/x_values"
+        android:layout_width="100sp"
+        android:layout_height="wrap_content"
+        android:text="X=0.00"
+        android:textAlignment="textStart"
+        android:textColor="@color/bluetooth_text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/y_values"
+        app:layout_constraintStart_toStartOf="@id/thumbstick_bg"
+        app:layout_constraintTop_toBottomOf="@id/thumbstick_bg" />
+
+    <TextView
+        android:id="@+id/y_values"
+        android:layout_width="100sp"
+        android:layout_height="wrap_content"
+        android:text="Y=0.00"
+        android:textAlignment="textEnd"
+        android:textColor="@color/bluetooth_text"
+        app:layout_constraintBottom_toBottomOf="@id/x_values"
+        app:layout_constraintEnd_toEndOf="@id/thumbstick_bg"
+        app:layout_constraintStart_toEndOf="@id/x_values"
+        app:layout_constraintTop_toTopOf="@id/x_values" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

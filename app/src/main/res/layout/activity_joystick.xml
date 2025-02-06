@@ -1,107 +1,149 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="?attr/fullscreenBackgroundColor"
     android:theme="@style/ThemeOverlay.BTJoystick.FullscreenContainer"
     tools:context=".JoystickActivity">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
-        <View
-            android:id="@+id/fullscreen_content"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+    <com.efhilton.utils.btjoystick.JoystickView
+        android:id="@+id/thumbstick_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
 
-            <FrameLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="4">
+    <GridLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/bluetooth_tertiary"
+        android:columnCount="3"
+        android:padding="5sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/thumbstick_right"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/thumbstick_left"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_default="wrap">
 
-                <!-- Background Image -->
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:src="@drawable/air_joystick_bg600" />
+        <!-- Switches (Rows 0-4) -->
+        <CheckBox
+            android:id="@+id/switch00"
+            style="@style/CheckboxStyle"
+            android:text="@string/f00" />
 
-                <!-- Thumbstick Image (Overlay) -->
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:src="@drawable/air_joystick_stick600" />
-            </FrameLayout>
+        <CheckBox
+            android:id="@+id/switch01"
+            style="@style/CheckboxStyle"
+            android:text="@string/f01" />
 
-            <LinearLayout
-                android:id="@+id/fullscreen_content_controls"
-                style="@style/Widget.Theme.BTJoystick.ButtonBar.Fullscreen"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:orientation="vertical"
-                tools:ignore="UselessParent">
+        <CheckBox
+            android:id="@+id/switch02"
+            style="@style/CheckboxStyle"
+            android:text="@string/f02" />
 
-                <Button
-                    android:id="@+id/dummy_button0"
-                    style="?android:attr/buttonBarButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:text="@string/dummy_button" />
+        <CheckBox
+            android:id="@+id/switch03"
+            style="@style/CheckboxStyle"
+            android:text="@string/f03" />
 
-                <Button
-                    android:id="@+id/dummy_button1"
-                    style="?android:attr/buttonBarButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:text="@string/dummy_button" />
+        <CheckBox
+            android:id="@+id/switch04"
+            style="@style/CheckboxStyle"
+            android:text="@string/f04" />
 
-                <Button
-                    android:id="@+id/dummy_button2"
-                    style="?android:attr/buttonBarButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:text="@string/dummy_button" />
+        <CheckBox
+            android:id="@+id/switch05"
+            style="@style/CheckboxStyle"
+            android:text="@string/f05" />
 
-                <Button
-                    android:id="@+id/dummy_button3"
-                    style="?android:attr/buttonBarButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:text="@string/dummy_button" />
+        <CheckBox
+            android:id="@+id/switch06"
+            style="@style/CheckboxStyle"
+            android:text="@string/f06" />
 
-            </LinearLayout>
+        <CheckBox
+            android:id="@+id/switch07"
+            style="@style/CheckboxStyle"
+            android:text="@string/f07" />
 
-            <FrameLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="4">
+        <CheckBox
+            android:id="@+id/switch08"
+            style="@style/CheckboxStyle"
+            android:text="@string/f08" />
 
-                <!-- Background Image -->
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:src="@drawable/air_joystick_bg600" />
+        <CheckBox
+            android:id="@+id/switch09"
+            style="@style/CheckboxStyle"
+            android:text="@string/f09" />
 
-                <!-- Thumbstick Image (Overlay) -->
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:src="@drawable/air_joystick_stick600" />
-            </FrameLayout>
-        </LinearLayout>
-    </FrameLayout>
-</FrameLayout>
+        <CheckBox
+            android:id="@+id/switch10"
+            style="@style/CheckboxStyle"
+            android:text="@string/f10" />
+
+        <CheckBox
+            android:id="@+id/switch11"
+            style="@style/CheckboxStyle"
+            android:text="@string/f11" />
+
+        <Button
+            android:id="@+id/button00"
+            style="@style/ButtonStyle"
+            android:text="@string/b00" />
+
+        <Button
+            android:id="@+id/button01"
+            style="@style/ButtonStyle"
+            android:text="@string/b01" />
+
+        <Button
+            android:id="@+id/button02"
+            style="@style/ButtonStyle"
+            android:text="@string/b02" />
+
+        <Button
+            android:id="@+id/button03"
+            style="@style/ButtonStyle"
+            android:text="@string/b03" />
+
+        <Button
+            android:id="@+id/button04"
+            style="@style/ButtonStyle"
+            android:text="@string/b04" />
+
+        <Button
+            android:id="@+id/button05"
+            style="@style/ButtonStyle"
+            android:text="@string/b05" />
+
+        <Button
+            android:id="@+id/button06"
+            style="@style/ButtonStyle"
+            android:text="@string/b06" />
+
+        <Button
+            android:id="@+id/button07"
+            style="@style/ButtonStyle"
+            android:text="@string/b07" />
+
+        <Button
+            android:id="@+id/button08"
+            style="@style/ButtonStyle"
+            android:src="@mipmap/ic_launcher_round"
+            android:text="@string/b08" />
+
+    </GridLayout>
+
+    <com.efhilton.utils.btjoystick.JoystickView
+        android:id="@+id/thumbstick_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
