@@ -38,6 +38,10 @@
     <string name="joystick_thumbstick">Joystick Thumbstick</string>
     <string name="values_for_x_axis">Values for X Axis</string>
     <string name="values_for_y_axis">Values for Y Axis</string>
-    <string name="click_for_settings">Click me for connection settings and general configuration</string>
+    <string name="click_to_clear">Click here to clear the logs.</string>
     <string name="connection_state_icon">Connection state icon</string>
+    <string name="cleared_screen">Cleared screen.</string>
+    <string name="opening_settings_screen">Opening Settings Screen.</string>
+    <string name="disconnected">Disconnected</string>
+    <string name="connected">Connected</string>
 </resources>

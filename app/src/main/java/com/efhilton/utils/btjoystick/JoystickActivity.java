@@ -1,5 +1,6 @@
 package com.efhilton.utils.btjoystick;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
@@ -173,24 +174,34 @@ public class JoystickActivity extends AppCompatActivity {
             return null;
         };
         View.OnClickListener consoleClicked = v -> {
-            outputConsole.setText("Boop! Opening Settings...");
+            outputConsole.setText(R.string.cleared_screen);
         };
 
-        outputConsole.setText(R.string.click_for_settings);
+        outputConsole.setText(R.string.click_to_clear);
         outputConsole.setOnClickListener(consoleClicked);
 
         isConnected = new AtomicBoolean(false);
+
         ImageView connectButton = binding.connectButton;
         connectButton.setOnClickListener(v -> {
-                    if (isConnected.get()){
+                    if (isConnected.get()) {
+                        outputConsole.setText(R.string.disconnected);
                         connectButton.setImageResource(R.drawable.ic_not_connected);
                         isConnected.set(false);
                     } else {
+                        outputConsole.setText(R.string.connected);
                         connectButton.setImageResource(R.drawable.ic_connected);
                         isConnected.set(true);
                     }
                 }
         );
+
+        ImageView settingsButton = binding.settingsButton;
+        settingsButton.setOnClickListener(v -> {
+                    outputConsole.setText(R.string.opening_settings_screen);
+                }
+        );
+
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
