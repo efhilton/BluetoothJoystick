@@ -3,13 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:background="@drawable/rounded_corner_background"
+    android:padding="10sp"
     tools:context=".JoystickActivity">
-
 
     <ImageView
         android:id="@+id/thumbstick_bg"
-        android:layout_width="300sp"
-        android:layout_height="300sp"
+        android:layout_width="200sp"
+        android:layout_height="200sp"
         android:contentDescription="@string/joystick_background"
         android:src="@drawable/air_joystick_bg600"
         app:layout_constraintEnd_toEndOf="parent"
@@ -29,11 +30,13 @@
 
     <TextView
         android:id="@+id/x_values"
-        android:layout_width="100sp"
+        android:layout_width="75sp"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/values_for_x_axis"
         android:text="X=0.00"
         android:textAlignment="textStart"
         android:textColor="@color/bluetooth_text"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/y_values"
         app:layout_constraintStart_toStartOf="@id/thumbstick_bg"
@@ -41,11 +44,13 @@
 
     <TextView
         android:id="@+id/y_values"
-        android:layout_width="100sp"
+        android:layout_width="75sp"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/values_for_y_axis"
         android:text="Y=0.00"
         android:textAlignment="textEnd"
         android:textColor="@color/bluetooth_text"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@id/x_values"
         app:layout_constraintEnd_toEndOf="@id/thumbstick_bg"
         app:layout_constraintStart_toEndOf="@id/x_values"

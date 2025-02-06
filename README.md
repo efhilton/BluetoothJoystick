@@ -9,4 +9,4 @@ This only works on Android v15 and higher.
 
 ## Questions?
 
-Please contact me at [edgar.hilton@gmai
+Please contact me at [edgar.hilton@gmail.com](mailto:edgar.hilton@gmail.com)

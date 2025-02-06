@@ -28,4 +28,6 @@
     <string name="b11">B11</string>
     <string name="joystick_background">Joystick Background</string>
     <string name="joystick_thumbstick">Joystick Thumbstick</string>
+    <string name="values_for_x_axis">Values for X Axis</string>
+    <string name="values_for_y_axis">Values for Y Axis</string>
 </resources>

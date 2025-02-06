@@ -12,22 +12,19 @@
         android:id="@+id/thumbstick_left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent" />
 
     <GridLayout
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/bluetooth_tertiary"
-        android:columnCount="3"
-        android:padding="5sp"
+        android:padding="20sp"
+        android:background="@drawable/rounded_corner_background"
+        android:columnCount="4"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/thumbstick_right"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/thumbstick_left"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_default="wrap">
+        app:layout_constraintTop_toTopOf="parent">
 
         <!-- Switches (Rows 0-4) -->
         <CheckBox
@@ -133,8 +130,22 @@
         <Button
             android:id="@+id/button08"
             style="@style/ButtonStyle"
-            android:src="@mipmap/ic_launcher_round"
             android:text="@string/b08" />
+
+        <Button
+            android:id="@+id/button09"
+            style="@style/ButtonStyle"
+            android:text="@string/b09" />
+
+        <Button
+            android:id="@+id/button10"
+            style="@style/ButtonStyle"
+            android:text="@string/b10" />
+
+        <Button
+            android:id="@+id/button11"
+            style="@style/ButtonStyle"
+            android:text="@string/b11" />
 
     </GridLayout>
 
@@ -142,7 +153,6 @@
         android:id="@+id/thumbstick_right"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
