@@ -28,7 +28,7 @@
             android:textColor="@color/yellow" />
     </ScrollView>
 
-    <com.efhilton.utils.btjoystick.JoystickView
+    <com.efhilton.utils.btjoystick.ThumbstickView
         android:id="@+id/thumbstick_left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -209,7 +209,7 @@
 
     </GridLayout>
 
-    <com.efhilton.utils.btjoystick.JoystickView
+    <com.efhilton.utils.btjoystick.ThumbstickView
         android:id="@+id/thumbstick_right"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -14,23 +14,23 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import kotlin.jvm.functions.Function2;
 
-public class JoystickView extends FrameLayout {
+public class ThumbstickView extends FrameLayout {
 
     public Function2<Float, Float, Void> onMoveCallback;
     private TextView xLabel;
     private TextView yLabel;
 
-    public JoystickView(Context context) {
+    public ThumbstickView(Context context) {
         super(context);
         init(null, 0);
     }
 
-    public JoystickView(Context context, AttributeSet attrs) {
+    public ThumbstickView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(attrs, 0);
     }
 
-    public JoystickView(Context context, AttributeSet attrs, int defStyle) {
+    public ThumbstickView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(attrs, defStyle);
     }

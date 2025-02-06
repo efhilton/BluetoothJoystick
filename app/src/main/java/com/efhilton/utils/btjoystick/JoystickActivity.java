@@ -16,8 +16,8 @@ public class JoystickActivity extends AppCompatActivity {
     // TODO: add Bluetooth Support
     // TODO: Create text console output view
     // TODO: Add gestures to Thumbstick View.
-    private JoystickView thumbstickLeftStick;
-    private JoystickView thumbstickRightStick;
+    private ThumbstickView thumbstickLeftStick;
+    private ThumbstickView thumbstickRightStick;
     private TextView outputConsole;
 
     private ActivityJoystickBinding binding;
