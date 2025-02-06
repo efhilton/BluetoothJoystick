@@ -1,6 +1,7 @@
 # Bluetooth Joystick Helper
 
-![image](https://github.com/user-attachments/assets/cf5b5054-119f-41a8-99cf-19aa710d9902)
+![image](https://github.com/user-attachments/assets/9f60be72-1795-4a4a-b17f-1e01e22596e4)
+
 
 ## Overview
 
