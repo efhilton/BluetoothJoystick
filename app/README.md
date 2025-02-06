@@ -1,0 +1,10 @@
+# Bluetooth Joystick Helper
+
+## Overview
+
+This is a simple utility that allows the user to connect to a remote to a remote device (such as a robot)
+and control it via a series of toggles, buttons, and joysticks. 
+
+## Questions?
+
+Please contact me at [edgar.hilton@gmail.com](mailto:edgar.hilton@gmail.com).
