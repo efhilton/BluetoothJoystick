@@ -39,4 +39,5 @@
     <string name="values_for_x_axis">Values for X Axis</string>
     <string name="values_for_y_axis">Values for Y Axis</string>
     <string name="click_for_settings">Click me for connection settings and general configuration</string>
+    <string name="connection_state_icon">Connection state icon</string>
 </resources>

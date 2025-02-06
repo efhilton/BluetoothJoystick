@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.efhilton.utils.btjoystick.databinding.ActivityJoystickBinding;
 
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class JoystickActivity extends AppCompatActivity {
     // TODO: add Bluetooth Support for output commands
@@ -21,7 +23,7 @@ public class JoystickActivity extends AppCompatActivity {
     private ThumbstickView thumbstickLeftStick;
     private ThumbstickView thumbstickRightStick;
     private TextView outputConsole;
-
+    AtomicBoolean isConnected;
     private ActivityJoystickBinding binding;
 
     @Override
@@ -173,8 +175,22 @@ public class JoystickActivity extends AppCompatActivity {
         View.OnClickListener consoleClicked = v -> {
             outputConsole.setText("Boop! Opening Settings...");
         };
+
         outputConsole.setText(R.string.click_for_settings);
         outputConsole.setOnClickListener(consoleClicked);
+
+        isConnected = new AtomicBoolean(false);
+        ImageView connectButton = binding.connectButton;
+        connectButton.setOnClickListener(v -> {
+                    if (isConnected.get()){
+                        connectButton.setImageResource(R.drawable.ic_not_connected);
+                        isConnected.set(false);
+                    } else {
+                        connectButton.setImageResource(R.drawable.ic_connected);
+                        isConnected.set(true);
+                    }
+                }
+        );
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
