@@ -125,11 +125,7 @@ public class JoystickView extends FrameLayout {
 
         float normalizedX = (newX - bgCenterX) / limitRadius;
         float normalizedY = -(newY - bgCenterY) / limitRadius;
-        xLabel.setText(String.format("X=%.2f", normalizedX));
-        yLabel.setText(String.format("Y=%.2f", normalizedY));
-        if (onMove != null) {
-            onMove.invoke(normalizedX, normalizedY);
-        }
+        updateDisplayValues(normalizedX, normalizedY, onMove);
     }
 
     private void centerThumbstick(ImageView joystick, Function2<Float, Float, Void> onMove, ImageView bg) {
