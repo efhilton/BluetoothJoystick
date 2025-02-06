@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <gradient android:startColor="@color/bluetooth_tertiary" android:endColor="@color/black" android:angle="45" android:type="linear" android:centerX="10"/>
+    <gradient
+        android:angle="45"
+        android:centerX="10"
+        android:endColor="@color/black"
+        android:startColor="@color/bluetooth_tertiary"
+        android:type="linear" />
     <corners android:radius="32dp" />
 </shape>

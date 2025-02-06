@@ -13,6 +13,9 @@ import com.efhilton.utils.btjoystick.databinding.ActivityJoystickBinding;
 import java.util.Locale;
 
 public class JoystickActivity extends AppCompatActivity {
+    // TODO: add Bluetooth Support
+    // TODO: Create text console output view
+    // TODO: Add gestures to Thumbstick View.
     private JoystickView thumbstickLeftStick;
     private JoystickView thumbstickRightStick;
     private TextView outputConsole;
@@ -22,7 +25,6 @@ public class JoystickActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Clear the flag when the activity is destroyed
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
@@ -166,6 +168,12 @@ public class JoystickActivity extends AppCompatActivity {
             outputConsole.setText(text);
             return null;
         };
+
+        View.OnClickListener consoleClicked = v -> {
+            outputConsole.setText("Ploop! Opening Settings...");
+        };
+        outputConsole.setText(R.string.click_for_settings);
+        outputConsole.setOnClickListener(consoleClicked);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
