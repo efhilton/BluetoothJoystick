@@ -42,7 +42,7 @@ public class JoystickView extends FrameLayout {
         };
 
         LayoutInflater inflater = LayoutInflater.from(getContext());
-        inflater.inflate(R.layout.joystick_view, this, true);
+        inflater.inflate(R.layout.thumbstick_view, this, true);
 
         // Get references to the ImageViews
         ImageView thumbStick = findViewById(R.id.thumbstick);
