@@ -1,5 +1,6 @@
 package com.efhilton.utils.btjoystick;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -15,10 +16,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import kotlin.jvm.functions.Function2;
 
 public class ThumbstickView extends FrameLayout {
-
+    AtomicInteger joystickIndex = new AtomicInteger(-1);
     public Function2<Float, Float, Void> onMoveCallback;
     private TextView xLabel;
     private TextView yLabel;
+    private ImageView joystick;
+    private ImageView joystickBg;
 
     public ThumbstickView(Context context) {
         super(context);
@@ -45,51 +48,45 @@ public class ThumbstickView extends FrameLayout {
         inflater.inflate(R.layout.thumbstick_view, this, true);
 
         // Get references to the ImageViews
-        ImageView thumbStick = findViewById(R.id.thumbstick);
-        ImageView thumbStickBg = findViewById(R.id.thumbstick_bg);
+        joystick = findViewById(R.id.thumbstick);
+        joystickBg = findViewById(R.id.thumbstick_bg);
         xLabel = findViewById(R.id.x_values);
         yLabel = findViewById(R.id.y_values);
 
-        setupJoystick(thumbStick, thumbStickBg);
+        setupJoystick();
     }
 
-    private void setupJoystick(ImageView joystick, ImageView joystickBg) {
-        AtomicInteger joystickIndex = new AtomicInteger(-1);
+    private boolean onTouchListener(View view, MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                if (joystickIndex.get() == -1) {
+                    final int pointerIndex = event.getActionIndex();
+                    joystickIndex.set(pointerIndex);
+                }
+                centerThumbstick(joystick, onMoveCallback, joystickBg);
+                break;
+            case MotionEvent.ACTION_MOVE: {
+                trackThumbMovements(joystick, onMoveCallback, event, joystickIndex.get(), joystickBg);
+                break;
+            }
+            case MotionEvent.ACTION_UP:
+                centerThumbstick(joystick, onMoveCallback, joystickBg);
+                break;
+            case MotionEvent.ACTION_CANCEL: {
+                centerThumbstick(joystick, onMoveCallback, joystickBg);
+                break;
+            }
+            default:
+                System.out.println("Default triggered with action: " + event.getActionMasked() + " (" + event.getAction() + ") and index: " + event.getActionIndex());
+                break;
+        }
+        return true;
+    }
 
+    @SuppressLint("ClickableViewAccessibility")
+    private void setupJoystick() {
         joystick.setOnClickListener(null);
-        joystick.setOnTouchListener((view, event) -> {
-            if (view != joystick) {
-                return true;
-            }
-
-            view.getParent().requestDisallowInterceptTouchEvent(true);
-            final ImageView bg = joystickBg;
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    if (joystickIndex.get() == -1) {
-                        final int pointerIndex = event.getActionIndex();
-                        joystickIndex.set(pointerIndex);
-                    }
-                    centerThumbstick(joystick, onMoveCallback, bg);
-
-                    break;
-                case MotionEvent.ACTION_MOVE: {
-                    trackThumbMovements(joystick, onMoveCallback, event, joystickIndex.get(), bg);
-                    break;
-                }
-                case MotionEvent.ACTION_UP:
-                    centerThumbstick(joystick, onMoveCallback, bg);
-                    break;
-                case MotionEvent.ACTION_CANCEL: {
-                    centerThumbstick(joystick, onMoveCallback, bg);
-                    break;
-                }
-                default:
-                    System.out.println("Default triggered");
-                    break;
-            }
-            return true;
-        });
+        joystick.setOnTouchListener(ThumbstickView.this::onTouchListener);
     }
 
     private void trackThumbMovements(ImageView joystick, Function2<Float, Float, Void> onMove, MotionEvent event,
@@ -137,8 +134,8 @@ public class ThumbstickView extends FrameLayout {
     }
 
     private void updateDisplayValues(float x, float y, Function2<Float, Float, Void> onMove) {
-        xLabel.setText(String.format(Locale.ENGLISH, "X=%.2f", x));
-        yLabel.setText(String.format(Locale.ENGLISH, "Y=%.2f", y));
+        xLabel.setText(String.format(Locale.ENGLISH, "X=%+1.2f", x));
+        yLabel.setText(String.format(Locale.ENGLISH, "Y=%+1.2f", y));
         if (onMove != null) {
             onMove.invoke(x, y);
         }

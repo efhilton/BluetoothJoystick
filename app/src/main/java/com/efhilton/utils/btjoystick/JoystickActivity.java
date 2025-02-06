@@ -13,9 +13,11 @@ import com.efhilton.utils.btjoystick.databinding.ActivityJoystickBinding;
 import java.util.Locale;
 
 public class JoystickActivity extends AppCompatActivity {
-    // TODO: add Bluetooth Support
-    // TODO: Create text console output view
-    // TODO: Add gestures to Thumbstick View.
+    // TODO: add Bluetooth Support for output commands
+    // TODO: add Bluetooth Support for incoming text
+    // TODO: Add connect/disconnect button?
+    // TODO: Create text console output view. This should act independently and load data off a protected ringbuffer.
+    // TODO: Create settings activity.
     private ThumbstickView thumbstickLeftStick;
     private ThumbstickView thumbstickRightStick;
     private TextView outputConsole;
@@ -158,19 +160,18 @@ public class JoystickActivity extends AppCompatActivity {
 
         thumbstickLeftStick = binding.thumbstickLeft;
         thumbstickLeftStick.onMoveCallback = (x, y) -> {
-            String text = String.format(Locale.ENGLISH, "LEFT Joystick: X = %.02f, Y = %.02f\n", x, y);
+            String text = String.format(Locale.ENGLISH, "LEFT: (%+1.02f, %+1.02f)\n", x, y);
             outputConsole.setText(text);
             return null;
         };
         thumbstickRightStick = binding.thumbstickRight;
         thumbstickRightStick.onMoveCallback = (x, y) -> {
-            String text = String.format(Locale.ENGLISH, "RIGHT Joystick: X = %.02f, Y = %.02f\n", x, y);
+            String text = String.format(Locale.ENGLISH, "RIGHT: (%+1.02f, %+1.02f)\n", x, y);
             outputConsole.setText(text);
             return null;
         };
-
         View.OnClickListener consoleClicked = v -> {
-            outputConsole.setText("Ploop! Opening Settings...");
+            outputConsole.setText("Boop! Opening Settings...");
         };
         outputConsole.setText(R.string.click_for_settings);
         outputConsole.setOnClickListener(consoleClicked);
