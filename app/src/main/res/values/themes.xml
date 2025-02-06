@@ -22,7 +22,7 @@
     </style>
 
     <style name="ThemeOverlay.BTJoystick.FullscreenContainer" parent="">
-        <item name="fullscreenBackgroundColor">@color/bluetooth_primary</item>
+        <item name="android:background">@color/button_disabled</item>
         <item name="fullscreenTextColor">@color/white</item>
         <item name="android:textSize">8sp</item>
     </style>
@@ -36,6 +36,10 @@
     </style>
 
     <style name="ButtonStyle" parent="Widget.MaterialComponents.Button">
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
         <item name="android:layout_gravity">center_horizontal</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>

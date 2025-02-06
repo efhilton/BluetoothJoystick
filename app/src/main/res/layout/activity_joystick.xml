@@ -4,27 +4,46 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?attr/fullscreenBackgroundColor"
+    android:background="@drawable/gradient_background"
     android:theme="@style/ThemeOverlay.BTJoystick.FullscreenContainer"
     tools:context=".JoystickActivity">
+
+    <ScrollView
+        android:id="@+id/console_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_margin="10sp"
+        android:background="@drawable/rounded_corner_background"
+        android:fillViewport="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/output_console"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:textColor="@color/yellow" />
+    </ScrollView>
 
     <com.efhilton.utils.btjoystick.JoystickView
         android:id="@+id/thumbstick_left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="@id/console_scroll_view"
+        app:layout_constraintTop_toBottomOf="@id/console_scroll_view" />
 
     <GridLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="20sp"
         android:background="@drawable/rounded_corner_background"
-        android:columnCount="4"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:columnCount="8"
+        android:padding="20sp"
         app:layout_constraintEnd_toStartOf="@+id/thumbstick_right"
         app:layout_constraintStart_toEndOf="@+id/thumbstick_left"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="@id/thumbstick_left">
 
         <!-- Switches (Rows 0-4) -->
         <CheckBox
@@ -87,6 +106,26 @@
             style="@style/CheckboxStyle"
             android:text="@string/f11" />
 
+        <CheckBox
+            android:id="@+id/switch12"
+            style="@style/CheckboxStyle"
+            android:text="@string/f12" />
+
+        <CheckBox
+            android:id="@+id/switch13"
+            style="@style/CheckboxStyle"
+            android:text="@string/f13" />
+
+        <CheckBox
+            android:id="@+id/switch14"
+            style="@style/CheckboxStyle"
+            android:text="@string/f14" />
+
+        <CheckBox
+            android:id="@+id/switch15"
+            style="@style/CheckboxStyle"
+            android:text="@string/f15" />
+
         <Button
             android:id="@+id/button00"
             style="@style/ButtonStyle"
@@ -147,13 +186,35 @@
             style="@style/ButtonStyle"
             android:text="@string/b11" />
 
+        <Button
+            android:id="@+id/button12"
+            style="@style/ButtonStyle"
+            android:text="@string/b12" />
+
+        <Button
+            android:id="@+id/button13"
+            style="@style/ButtonStyle"
+            android:text="@string/b13" />
+
+        <Button
+            android:id="@+id/button14"
+            style="@style/ButtonStyle"
+            android:text="@string/b14" />
+
+        <Button
+            android:id="@+id/button15"
+            style="@style/ButtonStyle"
+            android:text="@string/b15" />
+
     </GridLayout>
 
     <com.efhilton.utils.btjoystick.JoystickView
         android:id="@+id/thumbstick_right"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toTopOf="@id/thumbstick_left"
+        app:layout_constraintBottom_toBottomOf="@id/thumbstick_left"
+        app:layout_constraintEnd_toEndOf="@id/console_scroll_view"
+        app:layout_constraintTop_toBottomOf="@id/console_scroll_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

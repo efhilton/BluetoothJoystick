@@ -140,7 +140,7 @@ public class JoystickView extends FrameLayout {
         xLabel.setText(String.format(Locale.ENGLISH, "X=%.2f", x));
         yLabel.setText(String.format(Locale.ENGLISH, "Y=%.2f", y));
         if (onMove != null) {
-            onMove.invoke(0f, 0f);
+            onMove.invoke(x, y);
         }
     }
 }

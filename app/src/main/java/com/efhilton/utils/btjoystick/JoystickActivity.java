@@ -2,17 +2,29 @@ package com.efhilton.utils.btjoystick;
 
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.CheckBox;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.efhilton.utils.btjoystick.databinding.ActivityJoystickBinding;
 
+import java.util.Locale;
+
 public class JoystickActivity extends AppCompatActivity {
     private JoystickView thumbstickLeftStick;
     private JoystickView thumbstickRightStick;
+    private TextView outputConsole;
 
     private ActivityJoystickBinding binding;
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Clear the flag when the activity is destroyed
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +32,7 @@ public class JoystickActivity extends AppCompatActivity {
 
         binding = ActivityJoystickBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        outputConsole = binding.outputConsole;
 
         View.OnClickListener switchToggled = (v) -> {
             CheckBox switchCompat = (CheckBox) v;
@@ -51,6 +64,14 @@ public class JoystickActivity extends AppCompatActivity {
                 nameId = R.string.f10;
             } else if (id == R.id.switch11) {
                 nameId = R.string.f11;
+            } else if (id == R.id.switch12) {
+                nameId = R.string.f12;
+            } else if (id == R.id.switch13) {
+                nameId = R.string.f13;
+            } else if (id == R.id.switch14) {
+                nameId = R.string.f14;
+            } else if (id == R.id.switch15) {
+                nameId = R.string.f15;
             } else {
                 return;
             }
@@ -70,6 +91,10 @@ public class JoystickActivity extends AppCompatActivity {
         binding.switch09.setOnClickListener(switchToggled);
         binding.switch10.setOnClickListener(switchToggled);
         binding.switch11.setOnClickListener(switchToggled);
+        binding.switch12.setOnClickListener(switchToggled);
+        binding.switch13.setOnClickListener(switchToggled);
+        binding.switch14.setOnClickListener(switchToggled);
+        binding.switch15.setOnClickListener(switchToggled);
 
         View.OnClickListener buttonPressed = v -> {
             int nameId;
@@ -91,11 +116,26 @@ public class JoystickActivity extends AppCompatActivity {
                 nameId = R.string.b07;
             } else if (v.getId() == R.id.button08) {
                 nameId = R.string.b08;
+            } else if (v.getId() == R.id.button09) {
+                nameId = R.string.b09;
+            } else if (v.getId() == R.id.button10) {
+                nameId = R.string.b10;
+            } else if (v.getId() == R.id.button11) {
+                nameId = R.string.b11;
+            } else if (v.getId() == R.id.button12) {
+                nameId = R.string.b12;
+            } else if (v.getId() == R.id.button13) {
+                nameId = R.string.b13;
+            } else if (v.getId() == R.id.button14) {
+                nameId = R.string.b14;
+            } else if (v.getId() == R.id.button15) {
+                nameId = R.string.b15;
             } else {
                 return;
             }
             String name = getString(nameId);
-            System.out.println("Button " + name + " pressed");
+            String text = String.format(Locale.ENGLISH, "'" + name + "' was triggered");
+            outputConsole.setText(text);
         };
         binding.button00.setOnClickListener(buttonPressed);
         binding.button01.setOnClickListener(buttonPressed);
@@ -106,21 +146,32 @@ public class JoystickActivity extends AppCompatActivity {
         binding.button06.setOnClickListener(buttonPressed);
         binding.button07.setOnClickListener(buttonPressed);
         binding.button08.setOnClickListener(buttonPressed);
+        binding.button09.setOnClickListener(buttonPressed);
+        binding.button10.setOnClickListener(buttonPressed);
+        binding.button11.setOnClickListener(buttonPressed);
+        binding.button12.setOnClickListener(buttonPressed);
+        binding.button13.setOnClickListener(buttonPressed);
+        binding.button14.setOnClickListener(buttonPressed);
+        binding.button15.setOnClickListener(buttonPressed);
 
         thumbstickLeftStick = binding.thumbstickLeft;
         thumbstickLeftStick.onMoveCallback = (x, y) -> {
-            System.out.println("LEFT Joystick: X = " + x + ", Y = " + y);
+            String text = String.format(Locale.ENGLISH, "LEFT Joystick: X = %.02f, Y = %.02f\n", x, y);
+            outputConsole.setText(text);
             return null;
         };
         thumbstickRightStick = binding.thumbstickRight;
         thumbstickRightStick.onMoveCallback = (x, y) -> {
-            System.out.println("RIGHT Joystick: X = " + x + ", Y = " + y);
+            String text = String.format(Locale.ENGLISH, "RIGHT Joystick: X = %.02f, Y = %.02f\n", x, y);
+            outputConsole.setText(text);
             return null;
         };
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     private void printSwitchStatusChange(String fcnName, boolean isChecked) {
-        System.out.println("Function " + fcnName + " is " + (isChecked ? "ON" : "OFF"));
+        String text = String.format(Locale.ENGLISH, "Function '%s' is %s", fcnName, isChecked ? "ON" : "OFF");
+        outputConsole.setText(text);
     }
 
     @Override
