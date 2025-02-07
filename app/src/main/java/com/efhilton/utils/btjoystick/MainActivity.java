@@ -12,7 +12,6 @@ import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -24,17 +23,14 @@ import android.content.SharedPreferences;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
 import com.efhilton.utils.btjoystick.databinding.MainActivityBinding;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Locale;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainActivity extends AppCompatActivity {
     // TODO: add Bluetooth Support for output commands
@@ -42,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
     private ThumbstickView thumbstickLeftStick;
     private ThumbstickView thumbstickRightStick;
     private ImageView connectButton;
-    private ImageView settingsButton;
     private ConsoleOutputView outputConsole;
     private MainActivityBinding binding;
     private UUID serviceUid;
@@ -126,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
 
         outputConsole.clear();
 
-        settingsButton = binding.settingsButton;
+        ImageView settingsButton = binding.settingsButton;
         settingsButton.setOnClickListener(v -> {
                     outputConsole.setText(R.string.opening_settings_screen);
                     startActivity(new Intent(MainActivity.this, SettingsActivity.class));
@@ -284,6 +279,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void enableButtons(boolean b) {
+        System.out.printf("Enabling buttons: %s", b ? "true" : "false");
     }
 
     private void showProtectedMessage(String s) {
