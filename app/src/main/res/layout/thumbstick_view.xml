@@ -4,13 +4,13 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@drawable/rounded_corner_background"
-    android:padding="10sp"
+    android:padding="10dp"
     tools:context=".JoystickActivity">
 
     <ImageView
         android:id="@+id/thumbstick_bg"
-        android:layout_width="200sp"
-        android:layout_height="200sp"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         android:contentDescription="@string/joystick_background"
         android:src="@drawable/air_joystick_bg600"
         app:layout_constraintEnd_toEndOf="parent"
@@ -19,8 +19,8 @@
 
     <ImageView
         android:id="@+id/thumbstick"
-        android:layout_width="100sp"
-        android:layout_height="100sp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:contentDescription="@string/joystick_thumbstick"
         android:src="@drawable/air_joystick_stick320"
         app:layout_constraintBottom_toBottomOf="@id/thumbstick_bg"

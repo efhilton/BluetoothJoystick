@@ -23,7 +23,7 @@ public class JoystickActivity extends AppCompatActivity {
     // TODO: Create settings activity.
     private ThumbstickView thumbstickLeftStick;
     private ThumbstickView thumbstickRightStick;
-    private TextView outputConsole;
+    private ConsoleOutputView outputConsole;
     AtomicBoolean isConnected;
     private ActivityJoystickBinding binding;
 
@@ -39,7 +39,7 @@ public class JoystickActivity extends AppCompatActivity {
 
         binding = ActivityJoystickBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        outputConsole = binding.outputConsole;
+        outputConsole = binding.consoleOutput;
 
         View.OnClickListener switchToggled = (v) -> {
             CheckBox switchCompat = (CheckBox) v;
