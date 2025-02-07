@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ConsoleOutputView extends ScrollView {
+    final int MAX_HISTORY_LOGS = 250;
+    List<String> outputLog = new ArrayList<>();
     TextView textView;
     ScrollView scrollView;
 
@@ -60,25 +62,48 @@ public class ConsoleOutputView extends ScrollView {
         scrollView = findViewById(R.id.console_output_view);
 
         textView.setMovementMethod(new ScrollingMovementMethod());
+
+        textView.setOnClickListener(v -> {
+            clear();
+        });
     }
 
     public void setText(String text) {
         ZonedDateTime now = ZonedDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-        String formattedText = now.format(formatter) + ": " + text.replace("\n", "") + "\n";
-
+        final String formattedText;
+        if (text == null) {
+            outputLog.clear();
+            formattedText = now.format(formatter) + ": " + getResources().getString(R.string.click_to_clear);
+        } else {
+            formattedText = now.format(formatter) + ": " + text;
+        }
         textView.post(() -> {
-            textView.append(formattedText);
+            outputLog.add(formattedText);
+            if (outputLog.size() > MAX_HISTORY_LOGS) {
+                outputLog.remove(0);
+            }
+            StringBuffer sb = new StringBuffer();
+            for (String s : outputLog) {
+                sb.append(s).append("\n");
+            }
+            textView.setText(sb.toString());
             scrollToBottom();
         });
     }
+
     private void scrollToBottom() {
         final int scrollAmount = textView.getLayout().getLineTop(textView.getLineCount()) - textView.getHeight();
         if (scrollAmount > 0) {
             textView.scrollTo(0, scrollAmount);
         }
     }
+
     public void setText(int id) {
         setText(getResources().getString(id));
+    }
+
+    public void clear() {
+        setText(null);
     }
 }

@@ -163,13 +163,13 @@ public class JoystickActivity extends AppCompatActivity {
 
         thumbstickLeftStick = binding.thumbstickLeft;
         thumbstickLeftStick.onMoveCallback = (x, y) -> {
-            String text = String.format(Locale.ENGLISH, "LEFT: (%+1.02f, %+1.02f)\n", x, y);
+            String text = String.format(Locale.ENGLISH, "LEFT: (%+1.02f, %+1.02f)", x, y);
             outputConsole.setText(text);
             return null;
         };
         thumbstickRightStick = binding.thumbstickRight;
         thumbstickRightStick.onMoveCallback = (x, y) -> {
-            String text = String.format(Locale.ENGLISH, "RIGHT: (%+1.02f, %+1.02f)\n", x, y);
+            String text = String.format(Locale.ENGLISH, "RIGHT: (%+1.02f, %+1.02f)", x, y);
             outputConsole.setText(text);
             return null;
         };
@@ -177,7 +177,7 @@ public class JoystickActivity extends AppCompatActivity {
             outputConsole.setText(R.string.cleared_screen);
         };
 
-        outputConsole.setText(R.string.click_to_clear);
+        outputConsole.clear();
         outputConsole.setOnClickListener(consoleClicked);
 
         isConnected = new AtomicBoolean(false);
