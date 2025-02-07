@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory android:title="Device Settings">
+        <EditTextPreference
+            android:defaultValue="00:00:00:00:00:00"
+            android:key="mac-address"
+            android:summary="Enter the remote device's Bluetooth Mac Address"
+            android:title="Mac Address"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            android:defaultValue="0000180f-0000-1000-8000-00805f9b34fb"
+            android:key="service-uid"
+            android:summary="Enter the Service UID"
+            android:title="Service UID"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            android:defaultValue="00002a19-0000-1000-8000-00805f9b34fb"
+            android:key="characteristic-uid"
+            android:summary="Enter the Characteristic UID"
+            android:title="Characteristic UID"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+</PreferenceScreen>
