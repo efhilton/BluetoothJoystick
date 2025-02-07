@@ -13,7 +13,7 @@
         android:theme="@style/Theme.BTJoystick"
         tools:targetApi="31">
         <activity
-            android:name=".JoystickActivity"
+            android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="landscape"
             android:exported="true"

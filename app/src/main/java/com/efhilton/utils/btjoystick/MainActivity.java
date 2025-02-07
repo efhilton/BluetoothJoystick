@@ -1,21 +1,19 @@
 package com.efhilton.utils.btjoystick;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.efhilton.utils.btjoystick.databinding.ActivityJoystickBinding;
+import com.efhilton.utils.btjoystick.databinding.MainActivityBinding;
 
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class JoystickActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
     // TODO: add Bluetooth Support for output commands
     // TODO: add Bluetooth Support for incoming text
     // TODO: Create settings activity.
@@ -23,7 +21,7 @@ public class JoystickActivity extends AppCompatActivity {
     private ThumbstickView thumbstickRightStick;
     private ConsoleOutputView outputConsole;
     AtomicBoolean isConnected;
-    private ActivityJoystickBinding binding;
+    private MainActivityBinding binding;
 
     @Override
     protected void onDestroy() {
@@ -35,7 +33,7 @@ public class JoystickActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityJoystickBinding.inflate(getLayoutInflater());
+        binding = MainActivityBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         outputConsole = binding.consoleOutput;
 
