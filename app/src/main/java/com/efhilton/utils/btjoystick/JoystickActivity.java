@@ -18,8 +18,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class JoystickActivity extends AppCompatActivity {
     // TODO: add Bluetooth Support for output commands
     // TODO: add Bluetooth Support for incoming text
-    // TODO: Add connect/disconnect button?
-    // TODO: Create text console output view. This should act independently and load data off a protected ringbuffer.
     // TODO: Create settings activity.
     private ThumbstickView thumbstickLeftStick;
     private ThumbstickView thumbstickRightStick;
