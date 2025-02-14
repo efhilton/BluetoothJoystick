@@ -27,6 +27,8 @@ import androidx.preference.PreferenceManager;
 
 import com.efhilton.utils.btjoystick.databinding.MainActivityBinding;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -67,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
                     outputConsole.setText("Device Connected");
                     connectButton.setImageResource(R.drawable.ic_connected);
                     connectButton.setActivated(true);
+                    sendAllFunctionValues();
                 } else {
                     outputConsole.setText("Device Disconnected");
                     connectButton.setImageResource(R.drawable.ic_not_connected);
@@ -75,6 +78,25 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
+    private void sendAllFunctionValues() {
+        sendFunctionToggle(getString(R.string.f00), binding.switch00.isChecked());
+        sendFunctionToggle(getString(R.string.f01), binding.switch01.isChecked());
+        sendFunctionToggle(getString(R.string.f02), binding.switch02.isChecked());
+        sendFunctionToggle(getString(R.string.f03), binding.switch03.isChecked());
+        sendFunctionToggle(getString(R.string.f04), binding.switch04.isChecked());
+        sendFunctionToggle(getString(R.string.f05), binding.switch05.isChecked());
+        sendFunctionToggle(getString(R.string.f06), binding.switch06.isChecked());
+        sendFunctionToggle(getString(R.string.f07), binding.switch07.isChecked());
+        sendFunctionToggle(getString(R.string.f08), binding.switch08.isChecked());
+        sendFunctionToggle(getString(R.string.f09), binding.switch09.isChecked());
+        sendFunctionToggle(getString(R.string.f10), binding.switch10.isChecked());
+        sendFunctionToggle(getString(R.string.f11), binding.switch11.isChecked());
+        sendFunctionToggle(getString(R.string.f12), binding.switch12.isChecked());
+        sendFunctionToggle(getString(R.string.f13), binding.switch13.isChecked());
+        sendFunctionToggle(getString(R.string.f14), binding.switch14.isChecked());
+        sendFunctionToggle(getString(R.string.f15), binding.switch15.isChecked());
+    }
 
     private final BroadcastReceiver receivedDataReceiver = new BroadcastReceiver() {
         @Override
@@ -328,11 +350,9 @@ public class MainActivity extends AppCompatActivity {
         sendFunctionToggle(name, isChecked);
     }
 
-
     private void sendJoystickValues(char stick, float x, float y) {
-        short xShort = (short) (x * 32767);
-        short yShort = (short) (y * 32767);
-        sendData(new byte[]{(byte) stick, (byte) (xShort >> 8), (byte) (xShort), (byte) (yShort >> 8), (byte) (yShort)});
+        final byte[] data = serializeJoystick(stick, x, y, true);
+        sendData(data);
     }
 
     private void sendFunctionToggle(String fcn, boolean isChecked) {
@@ -420,4 +440,46 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         checkBluetoothPermission();
     }
+
+    public static byte[] serializeJoystick(char joystick, float x, float y, boolean packed) {
+        ByteBuffer buffer;
+
+        if (packed) {
+            buffer = ByteBuffer.allocate(5); // 5 bytes when packed
+        } else {
+            buffer = ByteBuffer.allocate(6); // 6 bytes if padding is present
+        }
+
+        // Use little-endian as required by most C++ platforms
+        buffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        // Serialize the joystick character
+        buffer.put((byte) joystick); // 1 byte (char joystick)
+
+        // Scaling and converting float x and y to int16_t
+        short x_scaled = floatToInt16(x, -1.0f, 1.0f); // Scale -1.0 to 1.0 range to -32768 to 32767
+        short y_scaled = floatToInt16(y, -1.0f, 1.0f); // Scale -1.0 to 1.0 range to -32768 to 32767
+
+        // Add padding if structure isn't packed
+        if (!packed) buffer.put((byte) 0x00);
+
+        // Serialize x and y as int16_t
+        buffer.putShort(x_scaled); // 2 bytes (int16_t x)
+        buffer.putShort(y_scaled); // 2 bytes (int16_t y)
+
+        return buffer.array(); // Return the serialized data
+    }
+
+    // Utility method for scaling float to int16_t
+    public static short floatToInt16(float value, float min, float max) {
+        // Normalize value between 0.0 and 1.0
+        float normalized = (value - min) / (max - min);
+        // Scale to [-32768, 32767]
+        float scaled = (normalized * 2.0f - 1.0f) * 32767.0f;
+        // Clamp and cast to short
+        if (scaled > 32767) scaled = 32767;
+        if (scaled < -32768) scaled = -32768;
+        return (short) scaled;
+    }
+
 }

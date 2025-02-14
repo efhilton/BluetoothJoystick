@@ -128,8 +128,15 @@ public class ThumbstickView extends FrameLayout {
     private void centerThumbstick(ImageView joystick, Function2<Float, Float, Void> onMove, ImageView bg) {
         float centerX = bg.getX() + bg.getWidth() / 2f;
         float centerY = bg.getY() + bg.getHeight() / 2f;
-        joystick.animate().x(centerX - joystick.getWidth() / 2f).y(centerY - joystick.getHeight() / 2f).setDuration(100).start();
+        joystick.animate()
+                .x(centerX - joystick.getWidth() / 2f)
+                .y(centerY - joystick.getHeight() / 2f)
+                .setDuration(100)
+                .start();
 
+        updateDisplayValues(0, 0, onMove);
+        updateDisplayValues(0, 0, onMove);
+        updateDisplayValues(0, 0, onMove);
         updateDisplayValues(0, 0, onMove);
     }
 
