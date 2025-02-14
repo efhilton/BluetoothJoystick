@@ -2,17 +2,15 @@ package com.efhilton.utils.btjoystick;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCallback;
-import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattService;
-import android.bluetooth.BluetoothManager;
-import android.bluetooth.BluetoothProfile;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -29,40 +27,116 @@ import androidx.preference.PreferenceManager;
 
 import com.efhilton.utils.btjoystick.databinding.MainActivityBinding;
 
-import java.util.Locale;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
-    // TODO: add Bluetooth Support for output commands
-    // TODO: add Bluetooth Support for incoming text
     private ThumbstickView thumbstickLeftStick;
     private ThumbstickView thumbstickRightStick;
     private ImageView connectButton;
     private ConsoleOutputView outputConsole;
     private MainActivityBinding binding;
-    private UUID serviceUid;
-    private UUID characteristicUid;
-    private BluetoothGatt bluetoothGatt;
-    private BluetoothGattCharacteristic characteristic;
+    private BluetoothService bluetoothService;
+    private boolean isServiceBound = false;
 
+    // Define the ServiceConnection
+    private final ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            BluetoothService.LocalBinder binder = (BluetoothService.LocalBinder) service;
+            bluetoothService = binder.getService();
+            isServiceBound = true;
+            outputConsole.setText("Ready to connect.");
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            bluetoothService = null;
+            isServiceBound = false;
+            outputConsole.setText("Service is shutdown.");
+        }
+    };
+    private final BroadcastReceiver connectionStatusReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d("MainActivity", "Received broadcast: " + intent.getAction());
+            if (BluetoothService.ACTION_CONNECTION_STATUS.equals(intent.getAction())) {
+                boolean isConnected = intent.getBooleanExtra(BluetoothService.EXTRA_IS_CONNECTED, false);
+                if (isConnected) {
+                    outputConsole.setText("Device Connected");
+                    connectButton.setImageResource(R.drawable.ic_connected);
+                    connectButton.setActivated(true);
+                } else {
+                    outputConsole.setText("Device Disconnected");
+                    connectButton.setImageResource(R.drawable.ic_not_connected);
+                    connectButton.setActivated(false);
+                }
+            }
+        }
+    };
+
+    private final BroadcastReceiver receivedDataReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d("MainActivity", "Received broadcast: " + intent.getAction());
+            if (BluetoothService.ACTION_RECEIVED_DATA.equals(intent.getAction())) {
+                final String receivedText = intent.getStringExtra(BluetoothService.EXTRA_RECEIVED_TEXT);
+                outputConsole.setText(receivedText);
+            }
+        }
+    };
 
     @SuppressLint("MissingPermission")
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        bluetoothGatt.disconnect();
-        bluetoothGatt.close();
-        bluetoothGatt = null;
-        characteristic = null;
         binding = null;
         thumbstickLeftStick = null;
         thumbstickRightStick = null;
         outputConsole = null;
 
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        if (isServiceBound) {
+            unbindService(serviceConnection);
+            isServiceBound = false;
+        }
     }
 
-    @SuppressLint("MissingPermission")
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
+    private void startBluetoothService() {
+        Intent intent = new Intent(this, BluetoothService.class);
+        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+
+        Intent startIntent = new Intent(this, BluetoothService.class);
+        startIntent.setAction(BluetoothService.ACTION_START_FOREGROUND_SERVICE);
+        startService(startIntent);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d("MainActivity", "onStart: Registering receivers");
+        registerReceiver(connectionStatusReceiver, new IntentFilter(BluetoothService.ACTION_CONNECTION_STATUS), Context.RECEIVER_NOT_EXPORTED);
+        registerReceiver(receivedDataReceiver, new IntentFilter(BluetoothService.ACTION_RECEIVED_DATA), Context.RECEIVER_NOT_EXPORTED);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d("MainActivity", "onStop: Unregistering receivers");
+        unregisterReceiver(connectionStatusReceiver);
+        unregisterReceiver(receivedDataReceiver);
+        stopBluetoothService();
+    }
+
+    private void stopBluetoothService() {
+        Intent stopIntent = new Intent(this, BluetoothService.class);
+        stopIntent.setAction(BluetoothService.ACTION_STOP_FOREGROUND_SERVICE);
+        startService(stopIntent);
+    }
+
+    @SuppressLint({"MissingPermission", "UnspecifiedRegisterReceiverFlag"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -71,6 +145,8 @@ public class MainActivity extends AppCompatActivity {
         binding = MainActivityBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         outputConsole = binding.consoleOutput;
+
+        startBluetoothService();
 
         binding.switch00.setOnClickListener(MainActivity.this::switchToggled);
         binding.switch01.setOnClickListener(MainActivity.this::switchToggled);
@@ -108,14 +184,12 @@ public class MainActivity extends AppCompatActivity {
 
         thumbstickLeftStick = binding.thumbstickLeft;
         thumbstickLeftStick.onMoveCallback = (x, y) -> {
-            String text = String.format(Locale.ENGLISH, "LEFT: (%+1.02f, %+1.02f)", x, y);
-            outputConsole.setText(text);
+            sendJoystickValues('L', x, y);
             return null;
         };
         thumbstickRightStick = binding.thumbstickRight;
         thumbstickRightStick.onMoveCallback = (x, y) -> {
-            String text = String.format(Locale.ENGLISH, "RIGHT: (%+1.02f, %+1.02f)", x, y);
-            outputConsole.setText(text);
+            sendJoystickValues('R', x, y);
             return null;
         };
 
@@ -130,64 +204,41 @@ public class MainActivity extends AppCompatActivity {
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        final BluetoothManager btManager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
-        final BluetoothAdapter bluetoothAdapter = btManager.getAdapter();
-        final BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
-            @Override
-            public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-                super.onConnectionStateChange(gatt, status, newState);
-                if (newState == BluetoothProfile.STATE_CONNECTED) {
-                    gatt.discoverServices();
-                    connectButton.setImageResource(R.drawable.ic_connected);
-                    outputConsole.setText("Connected");
-                } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                    connectButton.setImageResource(R.drawable.ic_not_connected);
-                    outputConsole.setText("Disconnected");
-                }
-            }
-
-            @Override
-            public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-                if (status == BluetoothGatt.GATT_SUCCESS) {
-                    final BluetoothGattService service = gatt.getService(serviceUid);
-                    if (service == null) {
-                        showProtectedMessage("Unable to Find Service. Please check your Service and Characteristic UUIDs");
-                    } else {
-                        characteristic = service.getCharacteristic(characteristicUid); // Initialize here
-                        if (characteristic == null) {
-                            showProtectedMessage("Unable to Find Characteristic. Please check your Service and Characteristic UUIDs");
-                        }
-                    }
-                }
-                enableButtons(characteristic != null);
-            }
-        };
-
-        enableButtons(false);
-
         connectButton = binding.connectButton;
         connectButton.setOnClickListener(v -> {
                     if (!v.isActivated()) {
-                        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-                        final String serviceUidString = sharedPreferences.getString("service-uid", "0000180f-0000-1000-8000-00805f9b34fb");
-                        final String characteristicUidString = sharedPreferences.getString("characteristic-uid", "00002a19-0000-1000-8000-00805f9b34fb");
-                        final String macAddress = sharedPreferences.getString("mac-address", "00:00:00:00:00:00");
-                        this.serviceUid = UUID.fromString(serviceUidString);
-                        this.characteristicUid = UUID.fromString(characteristicUidString);
-
-                        outputConsole.setText("Connecting to " + macAddress + "...");
-                        final BluetoothDevice device = bluetoothAdapter.getRemoteDevice(macAddress);
-                        bluetoothGatt = device.connectGatt(this, true, gattCallback);
+                        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                        final String macAddress = sharedPreferences.getString("mac-address", "F4:12:FA:67:3E:92");
+                        final UUID serviceUidString = UUID.fromString(sharedPreferences.getString("service-uid", "f0125634-1278-5634-1278-5634127856f0"));
+                        final UUID characteristicUidString = UUID.fromString(sharedPreferences.getString("characteristic-uid", "abcdef12-3456-7890-ab12-cdef56789012"));
+                        outputConsole.setText("Connecting to '" + macAddress.toUpperCase() + "'...");
+                        connectToBluetoothDevice(macAddress, serviceUidString, characteristicUidString);
                     } else {
                         outputConsole.setText("Disconnecting...");
-                        bluetoothGatt.disconnect();
-                        bluetoothGatt.close();
-                        bluetoothGatt = null;
-                        characteristic = null;
-                        enableButtons(false);
+                        disconnectFromBluetoothDevice();
                     }
                 }
         );
+
+    }
+
+    private void connectToBluetoothDevice(String macAddress, UUID serviceUidString, UUID characteristicUidString) {
+        if (isServiceBound && bluetoothService != null) {
+            Intent intent = new Intent(this, BluetoothService.class);
+            intent.putExtra(BluetoothService.EXTRA_MAC_ADDRESS, macAddress);
+            intent.putExtra(BluetoothService.EXTRA_SERVICE_UID, serviceUidString.toString());
+            intent.putExtra(BluetoothService.EXTRA_CHARACTERISTIC_UID, characteristicUidString.toString());
+            intent.setAction(BluetoothService.ACTION_CONNECT_TO_DEVICE);
+            startService(intent);
+        }
+    }
+
+    private void disconnectFromBluetoothDevice() {
+        if (isServiceBound && bluetoothService != null) {
+            Intent intent = new Intent(this, BluetoothService.class);
+            intent.setAction(BluetoothService.ACTION_DISCONNECT);
+            startService(intent);
+        }
     }
 
     private void buttonPressed(View v) {
@@ -228,8 +279,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         String name = getString(nameId);
-        String text = String.format(Locale.ENGLISH, "'" + name + "' was triggered");
-        outputConsole.setText(text);
+        sendTrigger(name);
     }
 
     void switchToggled(View v) {
@@ -275,20 +325,37 @@ public class MainActivity extends AppCompatActivity {
         }
 
         String name = getString(nameId);
-        printSwitchStatusChange(name, isChecked);
+        sendFunctionToggle(name, isChecked);
     }
 
-    private void enableButtons(boolean b) {
-        System.out.printf("Enabling buttons: %s", b ? "true" : "false");
+
+    private void sendJoystickValues(char stick, float x, float y) {
+        short xShort = (short) (x * 32767);
+        short yShort = (short) (y * 32767);
+        sendData(new byte[]{(byte) stick, (byte) (xShort >> 8), (byte) (xShort), (byte) (yShort >> 8), (byte) (yShort)});
     }
 
-    private void showProtectedMessage(String s) {
-        System.out.println(s);
+    private void sendFunctionToggle(String fcn, boolean isChecked) {
+        char function = fcn.charAt(0);
+        char idCharHex = fcn.charAt(1);
+        // Convert idCharHex to integer
+        int id = (idCharHex <= '9') ? idCharHex - '0' : idCharHex - 'A' + 10;
+        sendData(new byte[]{(byte) function, (byte) id, (byte) (isChecked ? 1 : 0)});
     }
 
-    private void printSwitchStatusChange(String fcnName, boolean isChecked) {
-        String text = String.format(Locale.ENGLISH, "Function '%s' is %s", fcnName, isChecked ? "ON" : "OFF");
-        outputConsole.setText(text);
+    private void sendTrigger(String fcn) {
+        char function = fcn.charAt(0);
+        char idCharHex = fcn.charAt(1);
+        // Convert idCharHex to integer
+        int id = (idCharHex <= '9') ? idCharHex - '0' : idCharHex - 'A' + 10;
+        sendData(new byte[]{(byte) function, (byte) id});
+    }
+
+    private void sendData(byte[] data) {
+        Intent intent = new Intent(this, BluetoothService.class);
+        intent.putExtra(BluetoothService.EXTRA_DATA, data);
+        intent.setAction(BluetoothService.ACTION_SEND_DATA);
+        startService(intent);
     }
 
     @Override
@@ -296,28 +363,55 @@ public class MainActivity extends AppCompatActivity {
         super.onPostCreate(savedInstanceState);
     }
 
-    private final ActivityResultLauncher<String> requestBluetoothPermissionLauncher =
-            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-                if (isGranted) {
-                    // Permission is granted. Continue the action or workflow
-                    // in your app.
-                    Log.d("MainActivity", "BLUETOOTH_CONNECT permission granted");
+    private final ActivityResultLauncher<String[]> requestBluetoothPermissionsLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), permissions -> {
+                boolean allGranted = true;
+                for (Boolean isGranted : permissions.values()) {
+                    if (!isGranted) {
+                        allGranted = false;
+                        break;
+                    }
+                }
+                if (allGranted) {
+                    // All permissions are granted. Continue with Bluetooth operations.
+                    Log.d("MainActivity", "All Bluetooth permissions granted");
                     // Proceed with Bluetooth operations here
                 } else {
                     // Explain to the user that the feature is unavailable because
                     // the features requires a permission that the user has denied.
-                    Log.d("MainActivity", "BLUETOOTH_CONNECT permission denied");
+                    Log.d("MainActivity", "Some Bluetooth permissions denied");
                 }
             });
 
     private void checkBluetoothPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
-        ) {
-            // You have the permission. Proceed with Bluetooth operations.
-            Log.d("MainActivity", "BLUETOOTH_CONNECT permission already granted");
+
+        List<String> permissionsToRequest = new ArrayList<>();
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            permissionsToRequest.add(Manifest.permission.BLUETOOTH_CONNECT);
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+            permissionsToRequest.add(Manifest.permission.BLUETOOTH_SCAN);
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            permissionsToRequest.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            permissionsToRequest.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE) != PackageManager.PERMISSION_GRANTED) {
+            permissionsToRequest.add(Manifest.permission.FOREGROUND_SERVICE);
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE) != PackageManager.PERMISSION_GRANTED) {
+            permissionsToRequest.add(Manifest.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE);
+        }
+
+        // Request permissions if needed
+        if (!permissionsToRequest.isEmpty()) {
+            String[] permissionsArray = permissionsToRequest.toArray(new String[0]);
+            requestBluetoothPermissionsLauncher.launch(permissionsArray);
         } else {
-            // You don't have the permission. Request it.
-            requestBluetoothPermissionLauncher.launch(Manifest.permission.BLUETOOTH_CONNECT);
+            // All permissions are already granted
+            Log.d("MainActivity", "All Bluetooth permissions already granted");
         }
     }
 

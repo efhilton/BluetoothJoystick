@@ -4,21 +4,21 @@
 
     <PreferenceCategory android:title="Device Settings">
         <EditTextPreference
-            android:defaultValue="00:00:00:00:00:00"
+            android:defaultValue="F4:12:FA:67:3E:92"
             android:key="mac-address"
             android:summary="Enter the remote device's Bluetooth Mac Address"
             android:title="Mac Address"
             app:useSimpleSummaryProvider="true" />
 
         <EditTextPreference
-            android:defaultValue="0000180f-0000-1000-8000-00805f9b34fb"
+            android:defaultValue="f0125634-1278-5634-1278-5634127856f0"
             android:key="service-uid"
             android:summary="Enter the Service UID"
             android:title="Service UID"
             app:useSimpleSummaryProvider="true" />
 
         <EditTextPreference
-            android:defaultValue="00002a19-0000-1000-8000-00805f9b34fb"
+            android:defaultValue="abcdef12-3456-7890-ab12-cdef56789012"
             android:key="characteristic-uid"
             android:summary="Enter the Characteristic UID"
             android:title="Characteristic UID"

@@ -93,6 +93,9 @@ public class ConsoleOutputView extends ScrollView {
     }
 
     private void scrollToBottom() {
+        if (textView == null || textView.getLayout() == null){
+            return;
+        }
         final int scrollAmount = textView.getLayout().getLineTop(textView.getLineCount()) - textView.getHeight();
         if (scrollAmount > 0) {
             textView.scrollTo(0, scrollAmount);
