@@ -20,6 +20,10 @@ jobs:
           git lfs install
       - name: Fetch Git LFS objects
         run: git lfs fetch --all
+      - name: List drawable contents
+        run: ls -la app/src/main/res/drawable-hdpi app/src/main/res/drawable-xhdpi app/src/main/res/drawable-xxhdpi
+      - name: Clean Gradle Cache
+        run: ./gradlew cleanBuildCache
       - name: set up JDK 21
         uses: actions/setup-java@v4
         with:
