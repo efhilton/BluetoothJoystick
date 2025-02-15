@@ -66,20 +66,32 @@ public class MainActivity extends AppCompatActivity {
             if (BluetoothService.ACTION_CONNECTION_STATUS.equals(intent.getAction())) {
                 boolean isConnected = intent.getBooleanExtra(BluetoothService.EXTRA_IS_CONNECTED, false);
                 if (isConnected) {
+                    connectButton.setEnabled(false);
                     outputConsole.setText("Device Connected");
                     connectButton.setImageResource(R.drawable.ic_connected);
+                    connectButton.setEnabled(true);
                     connectButton.setActivated(true);
-                    sendAllFunctionValues();
                 } else {
+                    connectButton.setEnabled(false);
                     outputConsole.setText("Device Disconnected");
                     connectButton.setImageResource(R.drawable.ic_not_connected);
+                    connectButton.setEnabled(true);
                     connectButton.setActivated(false);
                 }
             }
         }
     };
 
-    private void sendAllFunctionValues() {
+    private final BroadcastReceiver servicesFoundReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d("MainActivity", "Received broadcast: " + intent.getAction());
+            if (BluetoothService.ACTION_SERVICES_DISCOVERED.equals(intent.getAction())) {
+                sendAllFunctionValues();
+            }
+        }
+    };
+    private void sendAllFunctionValues()  {
         sendFunctionToggle(getString(R.string.f00), binding.switch00.isChecked());
         sendFunctionToggle(getString(R.string.f01), binding.switch01.isChecked());
         sendFunctionToggle(getString(R.string.f02), binding.switch02.isChecked());
@@ -139,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         Log.d("MainActivity", "onStart: Registering receivers");
+        registerReceiver(servicesFoundReceiver, new IntentFilter(BluetoothService.ACTION_SERVICES_DISCOVERED), Context.RECEIVER_NOT_EXPORTED);
         registerReceiver(connectionStatusReceiver, new IntentFilter(BluetoothService.ACTION_CONNECTION_STATUS), Context.RECEIVER_NOT_EXPORTED);
         registerReceiver(receivedDataReceiver, new IntentFilter(BluetoothService.ACTION_RECEIVED_DATA), Context.RECEIVER_NOT_EXPORTED);
     }
@@ -147,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         Log.d("MainActivity", "onStop: Unregistering receivers");
+        unregisterReceiver(servicesFoundReceiver);
         unregisterReceiver(connectionStatusReceiver);
         unregisterReceiver(receivedDataReceiver);
         stopBluetoothService();

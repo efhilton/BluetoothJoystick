@@ -26,11 +26,13 @@ import androidx.core.app.NotificationCompat;
 
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 import java.util.UUID;
 
 public class BluetoothService extends Service {
 
     private static final String TAG = "BluetoothService";
+    public static final String ACTION_SERVICES_DISCOVERED = "com.efhilton.utils.btjoystick.ACTION_SERVICES_DISCOVERED";
     private final IBinder binder = new LocalBinder();
     private BluetoothAdapter bluetoothAdapter;
     private BluetoothGatt bluetoothGatt;
@@ -157,7 +159,31 @@ public class BluetoothService extends Service {
     @SuppressLint("MissingPermission")
     private void sendData(byte[] data) {
         if (characteristic != null) {
-            bluetoothGatt.writeCharacteristic(characteristic, data, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT);
+            int result = bluetoothGatt.writeCharacteristic(characteristic, data, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT);
+            int retryCount = 0;
+            final int maxRetries = 3;
+            final long retryDelayMillis = 20L;
+
+            while (result != BluetoothGatt.GATT_SUCCESS && retryCount < maxRetries) {
+                if (result == 201) { // ERROR_GATT_WRITE_REQUEST_BUSY
+                    Log.w(TAG, "Write request busy, retrying...");
+                    try {
+                        Thread.sleep(retryDelayMillis);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    result = bluetoothGatt.writeCharacteristic(characteristic, data, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT);
+                    retryCount++;
+                } else {
+                    String msg = String.format(Locale.ENGLISH, "Unable to send data: %d", result);
+                    Log.e(TAG, msg);
+                    return;
+                }
+            }
+
+            if (result != BluetoothGatt.GATT_SUCCESS) {
+                Log.e(TAG, "Failed to send data after multiple retries.");
+            }
         }
     }
 
@@ -171,16 +197,14 @@ public class BluetoothService extends Service {
     }
 
     @SuppressLint("MissingPermission")
-    private boolean refreshDeviceCache(BluetoothGatt gatt){
+    private boolean refreshDeviceCache(BluetoothGatt gatt) {
         try {
-            BluetoothGatt localBluetoothGatt = gatt;
-            Method localMethod = localBluetoothGatt.getClass().getMethod("refresh", new Class[0]);
+            Method localMethod = gatt.getClass().getMethod("refresh", new Class[0]);
             if (localMethod != null) {
-                boolean bool = ((Boolean) localMethod.invoke(localBluetoothGatt, new Object[0])).booleanValue();
+                boolean bool = ((Boolean) localMethod.invoke(gatt, new Object[0])).booleanValue();
                 return bool;
             }
-        }
-        catch (Exception localException) {
+        } catch (Exception localException) {
             Log.e(TAG, "An exception occurred while refreshing device");
         }
         return false;
@@ -218,6 +242,7 @@ public class BluetoothService extends Service {
                 }
                 Log.d(TAG, "Service and characteristic discovered.");
                 setCharacteristicNotification(characteristic, true);
+                broadcastServicesDiscovered();
             } else {
                 Log.w(TAG, "onServicesDiscovered received: " + status);
             }
@@ -232,6 +257,12 @@ public class BluetoothService extends Service {
         }
 
     };
+
+    private void broadcastServicesDiscovered() {
+        Intent intent = new Intent(ACTION_SERVICES_DISCOVERED);
+        intent.setPackage(getPackageName());
+        sendBroadcast(intent);
+    }
 
     private void broadcastConnectionStatus(boolean isConnected) {
         Intent intent = new Intent(ACTION_CONNECTION_STATUS);

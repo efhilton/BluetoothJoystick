@@ -22,6 +22,7 @@ public class ThumbstickView extends FrameLayout {
     private TextView yLabel;
     private ImageView joystick;
     private ImageView joystickBg;
+    private int counter = 0;
 
     public ThumbstickView(Context context) {
         super(context);
@@ -63,7 +64,7 @@ public class ThumbstickView extends FrameLayout {
                     final int pointerIndex = event.getActionIndex();
                     joystickIndex.set(pointerIndex);
                 }
-                centerThumbstick(joystick, onMoveCallback, joystickBg);
+//                centerThumbstick(joystick, onMoveCallback, joystickBg);
                 break;
             case MotionEvent.ACTION_MOVE: {
                 trackThumbMovements(joystick, onMoveCallback, event, joystickIndex.get(), joystickBg);
@@ -122,7 +123,13 @@ public class ThumbstickView extends FrameLayout {
 
         float normalizedX = (newX - bgCenterX) / limitRadius;
         float normalizedY = -(newY - bgCenterY) / limitRadius;
-        updateDisplayValues(normalizedX, normalizedY, onMove);
+
+        // the lower, the more aggressive.
+        int DOWN_SAMPLE = 2;
+        counter = (counter + 1) % DOWN_SAMPLE;
+        if (counter == 0) {
+            updateDisplayValues(normalizedX, normalizedY, onMove);
+        }
     }
 
     private void centerThumbstick(ImageView joystick, Function2<Float, Float, Void> onMove, ImageView bg) {
@@ -134,9 +141,6 @@ public class ThumbstickView extends FrameLayout {
                 .setDuration(100)
                 .start();
 
-        updateDisplayValues(0, 0, onMove);
-        updateDisplayValues(0, 0, onMove);
-        updateDisplayValues(0, 0, onMove);
         updateDisplayValues(0, 0, onMove);
     }
 
