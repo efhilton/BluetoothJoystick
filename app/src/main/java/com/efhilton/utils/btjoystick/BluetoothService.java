@@ -26,6 +26,7 @@ import androidx.core.app.NotificationCompat;
 
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -289,12 +290,31 @@ public class BluetoothService extends Service {
         bluetoothGatt.setCharacteristicNotification(characteristic, enabled);
         BluetoothGattDescriptor descriptor = characteristic.getDescriptor(UUID.fromString("00002902-0000-1000-8000-00805f9b34fb")); // Client Characteristic Configuration Descriptor
         if (descriptor != null) {
-            descriptor.setValue(enabled ? BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE : BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);
-            bluetoothGatt.writeDescriptor(descriptor);
+            byte[] value = enabled ? BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE : BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE;
+            bluetoothGatt.writeDescriptor(descriptor, value);
         }
     }
 
+    public static int[] toUnsignedInts(byte[] signedBytes) {
+        int[] unsignedInts = new int[signedBytes.length];
+        for (int i = 0; i < signedBytes.length; i++) {
+            unsignedInts[i] = signedBytes[i] & 0xFF; // Convert each byte to unsigned
+        }
+        return unsignedInts;
+    }
+
     private void processReceivedData(byte[] data) {
+        int[] unsignedInts = toUnsignedInts(data);
+        Log.d("BLEClient", "Raw unsigned data: " + Arrays.toString(unsignedInts));
+
+        // Decode the payload as a UTF-8 encoded string
+        try {
+            String message = new String(data, StandardCharsets.UTF_8);
+            Log.i("BLEClient", "Decoded message: " + message);
+        } catch (Exception e) {
+            Log.e("BLEClient", "Failed to decode message: " + e.getMessage());
+        }
+
         String receivedText = new String(data, StandardCharsets.UTF_8); // Assuming UTF-8 encoding
         Log.d(TAG, "Received data: " + receivedText);
         // Broadcast the received text
