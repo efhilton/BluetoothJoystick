@@ -34,6 +34,7 @@ public class BluetoothService extends Service {
 
     private static final String TAG = "BluetoothService";
     public static final String ACTION_SERVICES_DISCOVERED = "com.efhilton.utils.btjoystick.ACTION_SERVICES_DISCOVERED";
+    public static final String EOF_SEQUENCE = "\r\nEOF\r\n";
     private final IBinder binder = new LocalBinder();
     private BluetoothAdapter bluetoothAdapter;
     private BluetoothGatt bluetoothGatt;
@@ -303,22 +304,23 @@ public class BluetoothService extends Service {
         return unsignedInts;
     }
 
-    private void processReceivedData(byte[] data) {
-        int[] unsignedInts = toUnsignedInts(data);
-        Log.d("BLEClient", "Raw unsigned data: " + Arrays.toString(unsignedInts));
+    private String receivedText = "";
 
-        // Decode the payload as a UTF-8 encoded string
+    private void processReceivedData(byte[] data) {
         try {
-            String message = new String(data, StandardCharsets.UTF_8);
-            Log.i("BLEClient", "Decoded message: " + message);
+            final String message = new String(data, StandardCharsets.UTF_8);
+            receivedText += message;
+
+            System.out.println("Received: " + receivedText);
+            if (receivedText.endsWith(EOF_SEQUENCE)) {
+                receivedText = receivedText.substring(0, receivedText.length() - EOF_SEQUENCE.length());
+                broadcastReceivedText(receivedText);
+                receivedText = "";
+            }
         } catch (Exception e) {
             Log.e("BLEClient", "Failed to decode message: " + e.getMessage());
         }
 
-        String receivedText = new String(data, StandardCharsets.UTF_8); // Assuming UTF-8 encoding
-        Log.d(TAG, "Received data: " + receivedText);
-        // Broadcast the received text
-        broadcastReceivedText(receivedText);
     }
 
     private void broadcastReceivedText(String text) {
