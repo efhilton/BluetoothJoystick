@@ -14,7 +14,7 @@ Settings can be found in the settings tab, where you specify the Bluetooth param
 
 This app is being written in conjunction with:
 - an [ESP32 Library](https://github.com/efhilton/BluetoothJoystickLibraryESP32)
-- a [simple testing application](https://github.com/efhilton/BluetoothJoystickLibraryESP32Test)
+- a [simple ESP32-S3 testing application](https://github.com/efhilton/BluetoothJoystickLibraryESP32Test)
 
 ## Questions?
 
