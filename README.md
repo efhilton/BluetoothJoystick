@@ -12,6 +12,9 @@ This only works on Android v15 and higher.
 
 Settings can be found in the settings tab, where you specify the Bluetooth parameters and the strings that should be sent when the different buttons and toggles are activated.
 
+This app is being written in conjunction with:
+- an [ESP32 Library](https://github.com/efhilton/BluetoothJoystickLibraryESP32)
+- a [simple testing application](https://github.com/efhilton/BluetoothJoystickLibraryESP32Test)
 
 ## Questions?
 
