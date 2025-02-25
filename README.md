@@ -24,8 +24,8 @@ This app is being written in conjunction with:
 ## Features
 This app contains the following features:
 
-- Up to 15 Function toggle buttons via which you can enable/disable any functions on the remote device. Eg. "Enable Line Following Feature"
-- Up to 15 Trigger buttons via which you can trigger events in the remote device. Eg. "Shoot".
+- Up to 16 Function toggle buttons via which you can enable/disable any functions on the remote device. Eg. "Enable Line Following Feature"
+- Up to 16 Trigger buttons via which you can trigger events in the remote device. Eg. "Shoot".
 - Left and Right Joysticks, normalized to +/- 1.0. This gives you four channels of analog values to control your remote device.
 - Timestamped Console output containing both local and remote console messages. For example, the device can send a message back showing "A Collision was detected".
 
