@@ -26,7 +26,6 @@ import androidx.core.app.NotificationCompat;
 
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -39,7 +38,6 @@ public class BluetoothService extends Service {
     private BluetoothAdapter bluetoothAdapter;
     private BluetoothGatt bluetoothGatt;
     private BluetoothGattCharacteristic characteristic;
-    private BluetoothGattService service;
     private UUID serviceUid;
     private UUID characteristicUid;
     private String macAddress;
@@ -116,7 +114,7 @@ public class BluetoothService extends Service {
 
     private void startForegroundService() {
         createNotificationChannel();
-        final Notification notification = createNotification("Bluetooth Service is Running...");
+        final Notification notification = notifyServiceIsRunning();
         startForeground(NOTIFICATION_ID, notification);
     }
 
@@ -135,7 +133,7 @@ public class BluetoothService extends Service {
         manager.createNotificationChannel(serviceChannel);
     }
 
-    private Notification createNotification(String content) {
+    private Notification notifyServiceIsRunning() {
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 this,
@@ -145,7 +143,7 @@ public class BluetoothService extends Service {
         );
         return new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("BluetoothJoystick Service")
-                .setContentText(content)
+                .setContentText("Bluetooth Service Is Running")
                 .setSmallIcon(R.drawable.ic_connected) // Replace with your icon
                 .setContentIntent(pendingIntent)
                 .build();
@@ -154,7 +152,7 @@ public class BluetoothService extends Service {
     @SuppressLint("MissingPermission")
     private void connectToDevice() {
         System.out.println("Connecting to " + macAddress + ", service: " + serviceUid + ", characteristic: " + characteristicUid);
-        BluetoothDevice device = bluetoothAdapter.getRemoteDevice(macAddress);
+        BluetoothDevice device = bluetoothAdapter.getRemoteDevice(macAddress.toUpperCase().trim());
         bluetoothGatt = device.connectGatt(this, false, gattCallback);
     }
 
@@ -172,7 +170,7 @@ public class BluetoothService extends Service {
                     try {
                         Thread.sleep(retryDelayMillis);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        Log.w(TAG, "Interrupted while waiting for retry.", e);
                     }
                     result = bluetoothGatt.writeCharacteristic(characteristic, data, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT);
                     retryCount++;
@@ -199,17 +197,13 @@ public class BluetoothService extends Service {
     }
 
     @SuppressLint("MissingPermission")
-    private boolean refreshDeviceCache(BluetoothGatt gatt) {
+    private void refreshDeviceCache(BluetoothGatt gatt) {
         try {
-            Method localMethod = gatt.getClass().getMethod("refresh", new Class[0]);
-            if (localMethod != null) {
-                boolean bool = ((Boolean) localMethod.invoke(gatt, new Object[0])).booleanValue();
-                return bool;
-            }
+            Method localMethod = gatt.getClass().getMethod("refresh");
+            localMethod.invoke(gatt);
         } catch (Exception localException) {
             Log.e(TAG, "An exception occurred while refreshing device");
         }
-        return false;
     }
 
     private final BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
@@ -232,7 +226,7 @@ public class BluetoothService extends Service {
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                service = gatt.getService(serviceUid);
+                BluetoothGattService service = gatt.getService(serviceUid);
                 if (service == null) {
                     Log.e(TAG, "Unable to find service: " + serviceUid);
                     return;
@@ -294,14 +288,6 @@ public class BluetoothService extends Service {
             byte[] value = enabled ? BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE : BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE;
             bluetoothGatt.writeDescriptor(descriptor, value);
         }
-    }
-
-    public static int[] toUnsignedInts(byte[] signedBytes) {
-        int[] unsignedInts = new int[signedBytes.length];
-        for (int i = 0; i < signedBytes.length; i++) {
-            unsignedInts[i] = signedBytes[i] & 0xFF; // Convert each byte to unsigned
-        }
-        return unsignedInts;
     }
 
     private String receivedText = "";
