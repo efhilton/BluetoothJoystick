@@ -18,8 +18,8 @@ Settings can be found in the settings tab, where you specify the Bluetooth conne
 
 This app is being written in conjunction with:
 
-- an [ESP32 Library](https://github.com/efhilton/BluetoothJoystickLibraryESP32)
-- a [simple ESP32-S3 testing application](https://github.com/efhilton/BluetoothJoystickLibraryESP32Test)
+- an [ESP32 Library](https://github.com/efhilton/BluetoothJoystickLibraryESP32).  You must add this within your `components` folder.
+- a [simple ESP32-S3 testing application](https://github.com/efhilton/BluetoothJoystickLibraryESP32Test). You can use this as an example on how to use the library.
 
 ## Features
 This app contains the following features:
