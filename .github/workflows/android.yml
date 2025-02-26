@@ -15,17 +15,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Ensure a full clone (not shallow)
-      - name: Wait for File System Update
-        run: sleep 5 # Wait for 5 seconds
-      - name: Check .gitattributes
-        run: ls -la .gitattributes
-      - name: Check LFS Files
-        run: |
-          ls -la app/src/main/res/drawable-hdpi/ic_connected.png
-          ls -la app/src/main/res/drawable-xxhdpi/ic_settings.png
-          ls -la app/src/main/res/drawable-xhdpi/ic_settings.png
-      - name: List drawable contents
-        run: ls -la app/src/main/res/drawable-hdpi app/src/main/res/drawable-xhdpi app/src/main/res/drawable-xxhdpi
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
