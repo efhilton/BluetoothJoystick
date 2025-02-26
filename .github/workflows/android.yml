@@ -11,19 +11,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Ensure a full clone (not shallow)
       - name: Install Git LFS
         run: |
           sudo apt-get update
           sudo apt-get install -y git-lfs
           git lfs install
       - name: Fetch Git LFS objects
-        run: git lfs fetch --all
+        run: git lfs fetch --all --prune # Fetch all LFS objects and prune old ones
       - name: Check LFS Files
         run: |
           ls -la app/src/main/res/drawable-hdpi/ic_connected.png
           ls -la app/src/main/res/drawable-xxhdpi/ic_settings.png
           ls -la app/src/main/res/drawable-xhdpi/ic_settings.png
+      - name: List drawable contents
+        run: ls -la app/src/main/res/drawable-hdpi app/src/main/res/drawable-xhdpi app/src/main/res/drawable-xxhdpi
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
