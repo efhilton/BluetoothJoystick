@@ -28,7 +28,7 @@ jobs:
           echo "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com" > ~/.git-credentials
           git config --global credential.https://github.com.helper store
       - name: Fetch Git LFS objects
-        run: git lfs fetch --all --prune -v # Fetch all LFS objects and prune old ones
+        run: git lfs fetch --all --prune # Fetch all LFS objects and prune old ones
       - name: Check .gitattributes
         run: ls -la .gitattributes
       - name: Check LFS Files
