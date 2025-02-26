@@ -19,8 +19,11 @@ jobs:
           git lfs install
       - name: Fetch Git LFS objects
         run: git lfs fetch --all
-      - name: List drawable contents
-        run: ls -la app/src/main/res/drawable-hdpi app/src/main/res/drawable-xhdpi app/src/main/res/drawable-xxhdpi
+      - name: Check LFS Files
+        run: |
+          ls -la app/src/main/res/drawable-hdpi/ic_connected.png
+          ls -la app/src/main/res/drawable-xxhdpi/ic_settings.png
+          ls -la app/src/main/res/drawable-xhdpi/ic_settings.png
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -36,5 +39,7 @@ jobs:
           compile-sdk-version: "34" # Replace with your required version
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+      - name: Clean with Gradle
+        run: ./gradlew clean
       - name: Build with Gradle
         run: ./gradlew build
