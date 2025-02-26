@@ -18,14 +18,14 @@ Settings can be found in the settings tab, where you specify the Bluetooth conne
 
 This app is being written in conjunction with:
 
-- an [ESP32 Library](https://github.com/efhilton/BluetoothJoystickLibraryESP32)
-- a [simple ESP32-S3 testing application](https://github.com/efhilton/BluetoothJoystickLibraryESP32Test)
+- an [ESP32 Library](https://github.com/efhilton/BluetoothJoystickLibraryESP32).  You must add this within your `components` folder.
+- a [simple ESP32-S3 testing application](https://github.com/efhilton/BluetoothJoystickLibraryESP32Test). You can use this as an example on how to use the library.
 
 ## Features
 This app contains the following features:
 
-- Up to 15 Function toggle buttons via which you can enable/disable any functions on the remote device. Eg. "Enable Line Following Feature"
-- Up to 15 Trigger buttons via which you can trigger events in the remote device. Eg. "Shoot".
+- Up to 16 Function toggle buttons via which you can enable/disable any functions on the remote device. Eg. "Enable Line Following Feature"
+- Up to 16 Trigger buttons via which you can trigger events in the remote device. Eg. "Shoot".
 - Left and Right Joysticks, normalized to +/- 1.0. This gives you four channels of analog values to control your remote device.
 - Timestamped Console output containing both local and remote console messages. For example, the device can send a message back showing "A Collision was detected".
 
